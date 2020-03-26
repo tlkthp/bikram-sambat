@@ -1,118 +1,66 @@
 package com.di.utils.bs;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 public abstract class Utils {
 
-    private final static Map<Character, Integer> NP_DIGIT_TO_INT_LOOKUP = new HashMap<Character, Integer>() {{
-        put('०', 0);
-        put('१', 1);
-        put('२', 2);
-        put('३', 3);
-        put('४', 4);
-        put('५', 5);
-        put('६', 6);
-        put('७', 7);
-        put('८', 8);
-        put('९', 9);
-    }};
-
-    /**
-     * Convert Nepali digit into english digit.
-     *
-     * @param nepaliDigit
-     * @return
-     */
-    public static int nepaliDigitToInt(String nepaliDigit) {
-        if (!isValidNepaliDigit(nepaliDigit)) {
-            throw new RuntimeException(nepaliDigit + " is not a valid Nepali digit. Should be one of " + NP_DIGIT_TO_INT_LOOKUP.keySet());
+    public static boolean isValidDnDigit(String nepaliDigit) {
+        for (int len = nepaliDigit.length(), i = 0; i < len; ++i) {
+            char c = nepaliDigit.charAt(i);
+            // ० - ९
+            // 2406 - 2415
+            boolean validDigit = c >= 2406 && c < 2415;
+            if (!validDigit) return false;
         }
-
-        String str = nepaliDigit.chars()
-                                .mapToObj(c -> (char) c)
-                                .map(dd -> NP_DIGIT_TO_INT_LOOKUP.get(dd))
-                                .map(num -> Integer.toString(num))
-                                .reduce("", (first, second) -> first + second);
-        return Integer.parseInt(str);
-    }
-
-    public static int nepaliDigitToInt_j7(String nepaliDigit) {
-        if (!isValidNepaliDigit_j7(nepaliDigit)) {
-            throw new RuntimeException(nepaliDigit + " is not a valid Nepali digit. Should be one of " + NP_DIGIT_TO_INT_LOOKUP.keySet());
-        }
-
-        char[] chars = nepaliDigit.toCharArray();
-
-        String num = "";
-        for (char c : chars) {
-            Integer intVal = NP_DIGIT_TO_INT_LOOKUP.get(c);
-            num += Integer.toString(intVal);
-        }
-
-        return Integer.parseInt(num);
-    }
-
-    public static boolean isValidNepaliDigit(String nepaliDigit) {
-        return nepaliDigit.chars()
-                          .mapToObj(c -> (char) c)
-                          .allMatch(ch -> NP_DIGIT_TO_INT_LOOKUP.keySet().contains(ch));
-    }
-
-    public static boolean isValidNepaliDigit_j7(String nepaliDigit) {
-        char[] chars = nepaliDigit.toCharArray();
-        for (char c : chars) {
-            if (!NP_DIGIT_TO_INT_LOOKUP.keySet().contains(c)) {
-                return false;
-            }
-        }
-
         return true;
     }
 
-    public static String intToNepaliDigit(int digit) {
-        String devnagariDigit = Integer.toString(digit);
-        Map<Integer, Character> lookup = reverse(NP_DIGIT_TO_INT_LOOKUP);
-        return devnagariDigit.chars()
-                             .map(num -> lookup.get(Character.getNumericValue(num)))
-                             .mapToObj(c -> (char) c) // map to object stream
-                             .map(ch -> Character.toString(ch)) // convert chars into strings
-                             .reduce("", (f, s) -> f + s);
+    /**
+     * Converts integer to Devanagari digits e.g. 987654321 to ९८७६५४३२१
+     *
+     * @param intVal
+     * @return
+     */
+    public static String intToDnDigit(int intVal) {
+        CharSequence from = Integer.toString(intVal);
 
+        StringBuilder bob = new StringBuilder();
+        for (int len = from.length(), i = 0; i < len; ++i) {
+            char c = from.charAt(i);
+            if (c >= 48 && c < 58) c += 2358;
+            bob.append(c);
+        }
+        return bob.toString();
     }
 
-    public static String intToNepaliDigit_j7(int digit) {
-        Map<Integer, Character> lookup = reverse_j7(NP_DIGIT_TO_INT_LOOKUP);
-
-        String nepaliDigit = "";
-        for (char c : Integer.toString(digit).toCharArray()) {
-            Character chr = lookup.get(Character.getNumericValue(c));
-            String s = Character.toString(chr);
-            nepaliDigit += s;
+    /**
+     * Converts Devanagari digit to integer e.g. ९८७६५४३२१ to 987654321
+     *
+     * @param dnDigit
+     * @return
+     */
+    public static int dnDigitToInt(CharSequence dnDigit) {
+        StringBuilder sb = new StringBuilder();
+        for (int len = dnDigit.length(), i = 0; i < len; ++i) {
+            char c = dnDigit.charAt(i);
+            // ० - ९
+            // 2406 - 2415
+            if (c >= 2406 && c < 2415) c -= 2358;
+            sb.append(c);
         }
 
-        return nepaliDigit;
-    }
-
-    private static <V, K> Map<V, K> reverse(Map<K, V> lookup) {
-        Map<V, K> reverse = lookup.entrySet().stream()
-                                  .collect(Collectors.toMap(entry -> entry.getValue(), entry -> entry.getKey(), (old, n) -> old));
-        return reverse;
-    }
-
-    private static <V, K> Map<V, K> reverse_j7(Map<K, V> lookup) {
-        Map<V, K> reverse = new HashMap<>();
-        for (K key : lookup.keySet()) {
-            reverse.put(lookup.get(key), key);
-        }
-        return reverse;
+        return Integer.parseInt(sb.toString());
     }
 
     public static void main(String[] args) {
-        System.out.println("Valid ? " + isValidNepaliDigit_j7("९९९९९९९"));
-        System.out.println(nepaliDigitToInt_j7("९९९९९९९"));
-        System.out.println(intToNepaliDigit_j7(1234567890));
+
+        System.out.println(intToDnDigit(987654321));
+        System.out.println(intToDnDigit(987654321));
+
+        System.out.println(dnDigitToInt("९८७६५४३२१"));
+
+        char c = '०';
+        // ० - ९
+        // 2406 - 2415
+        System.out.println((int) c);
     }
 
 }

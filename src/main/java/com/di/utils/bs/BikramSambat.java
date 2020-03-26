@@ -76,10 +76,10 @@ public final class BikramSambat implements Comparable<BikramSambat> {
         this.month = month;
         this.dayOfMonth = dayOfMonth;
 
-        this.dnYear = Utils.intToNepaliDigit(year);
+        this.dnYear = Utils.intToDnDigit(year);
         this.dnMonth = BSMonth.fromIntValue(month).getNepName();
-        this.dnDayOfMonth = Utils.intToNepaliDigit(dayOfMonth);
-        this.dnString = Utils.intToNepaliDigit(dayOfMonth) + " " + BSMonth.fromIntValue(month).getNepName() + ", " + Utils.intToNepaliDigit(year);
+        this.dnDayOfMonth = Utils.intToDnDigit(dayOfMonth);
+        this.dnString = Utils.intToDnDigit(dayOfMonth) + " " + BSMonth.fromIntValue(month).getNepName() + ", " + Utils.intToDnDigit(year);
     }
 
     public static BikramSambat of(int year, int month, int day) {
@@ -87,11 +87,11 @@ public final class BikramSambat implements Comparable<BikramSambat> {
     }
 
     public static BikramSambat of(String dnYear, String dnMonth, String dnDayOfMonth) {
-        if (!Utils.isValidNepaliDigit(dnYear)) {
+        if (!Utils.isValidDnDigit(dnYear)) {
             throw new RuntimeException(dnYear + " is not a valid Nepali digit.");
         }
 
-        if (!Utils.isValidNepaliDigit(dnDayOfMonth)) {
+        if (!Utils.isValidDnDigit(dnDayOfMonth)) {
             throw new RuntimeException(dnDayOfMonth + " is not a valid Nepali digit.");
         }
 
@@ -99,9 +99,9 @@ public final class BikramSambat implements Comparable<BikramSambat> {
             throw new RuntimeException(dnMonth + " is not a valid Nepali month.");
         }
 
-        int y = Utils.nepaliDigitToInt(dnYear);
+        int y = Utils.dnDigitToInt(dnYear);
         int m = BS_MONTH_TO_INT_LOOKUP.get(dnMonth);
-        int d = Utils.nepaliDigitToInt(dnDayOfMonth);
+        int d = Utils.dnDigitToInt(dnDayOfMonth);
 
         return BikramSambat.of(y, m, d);
     }
