@@ -23,7 +23,6 @@ class BsAdConverterTest {
 
     @Test
     void localDateToBs_1() {
-        //12 Feb 1997 - 1 Falgun 2053  --- error giving 2053 Magh 30
         BikramSambat bs4 = BikramSambat.from(LocalDate.of(1997, 2, 12));
         assertEquals(BikramSambat.of(2053, 11, 1), bs4);
 

@@ -39,27 +39,6 @@ public final class BikramSambat implements Comparable<BikramSambat> {
         put("चैत्र", 12);
         put("चैत", 12);
     }};
-//    private static final HashMap<String, Integer> BS_DAY_TO_INT_LOOKUP = new HashMap<String, Integer>() {{
-//        put("आइतवार", 1);
-//        put("आईतवार", 1);
-//        put("आइतबार", 1);
-//        put("सोमवार", 2);
-//        put("सोमबार", 2);
-//        put("मङ्गलवार", 3);
-//        put("मंगलवार", 3);
-//        put("मंगलबार", 3);
-//        put("मङ्गलबार", 3);
-//        put("बुधवार", 4);
-//        put("बुधबार", 4);
-//        put("बिहिवार", 5);
-//        put("बिहिबार", 5);
-//        put("बिहीवार", 5);
-//        put("बिहीबार", 5);
-//        put("शुक्रवार", 6);
-//        put("शुक्रबार", 6);
-//        put("शनिवार", 7);
-//        put("शनिबार", 7);
-//    }};
 
     private final int year;
     private final int month;
