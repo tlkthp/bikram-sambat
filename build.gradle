@@ -2,9 +2,12 @@ plugins {
     id 'java'
 }
 
-group 'com.tlk.thp'
+group 'com.di.utils'
 version '1.0-SNAPSHOT'
 
+compileJava.options.encoding = 'UTF-8'
+compileTestJava.options.encoding = 'UTF-8'
+//javadoc.options.encoding = 'UTF-8'
 sourceCompatibility = 1.8
 
 repositories {
@@ -12,5 +15,16 @@ repositories {
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compileOnly 'org.projectlombok:lombok:1.18.12'
+    annotationProcessor 'org.projectlombok:lombok:1.18.12'
+
+    testCompileOnly 'org.projectlombok:lombok:1.18.12'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.12'
+
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.1")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.6.1")
+}
+
+test {
+    useJUnitPlatform()
 }

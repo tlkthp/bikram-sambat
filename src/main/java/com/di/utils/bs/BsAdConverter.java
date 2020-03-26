@@ -1,8 +1,6 @@
-package nepalidate;
+package com.di.utils.bs;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -11,8 +9,8 @@ import java.util.Map;
 import static java.time.temporal.ChronoUnit.DAYS;
 
 class BsAdConverter {
-
-    private static Map<Integer, Integer[]> bsMonthsDaysLookup = new HashMap<Integer, Integer[]>() {{
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd-MMM-yyyy");
+    private static final Map<Integer, Integer[]> NO_OF_DAYS_IN_BS_YR_LOOKUP = new HashMap<Integer, Integer[]>() {{
         put(1970, new Integer[]{31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30});
         put(1971, new Integer[]{31, 31, 32, 31, 32, 30, 30, 29, 30, 29, 30, 30});
         put(1972, new Integer[]{31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 30});
@@ -145,9 +143,7 @@ class BsAdConverter {
         put(2099, new Integer[]{31, 31, 32, 31, 31, 31, 30, 29, 29, 30, 30, 30});
         put(2100, new Integer[]{31, 32, 31, 32, 30, 31, 30, 29, 30, 29, 30, 30});
     }};
-
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd-MMM-yyyy");
-    private static Map<Integer, LocalDate> bsToAdNewYearDateLookup = new HashMap<Integer, LocalDate>() {{
+    public static Map<Integer, LocalDate> BS_YR_TO_AD_NEW_YEAR_DAY_MAP = new HashMap<Integer, LocalDate>() {{
         put(1970, LocalDate.parse("13-Apr-1913", FORMATTER));
         put(1971, LocalDate.parse("13-Apr-1914", FORMATTER));
         put(1972, LocalDate.parse("13-Apr-1915", FORMATTER));
@@ -241,7 +237,7 @@ class BsAdConverter {
         put(2060, LocalDate.parse("14-Apr-2003", FORMATTER));
         put(2061, LocalDate.parse("13-Apr-2004", FORMATTER));
         put(2062, LocalDate.parse("14-Apr-2005", FORMATTER));
-        put(2063, LocalDate.parse("14-Apr-2005", FORMATTER));
+        put(2063, LocalDate.parse("14-Apr-2006", FORMATTER));
         put(2064, LocalDate.parse("14-Apr-2007", FORMATTER));
         put(2065, LocalDate.parse("13-Apr-2008", FORMATTER));
         put(2066, LocalDate.parse("14-Apr-2009", FORMATTER));
@@ -281,38 +277,27 @@ class BsAdConverter {
         put(2100, LocalDate.parse("14-Apr-2043", FORMATTER));
     }};
 
-    // 2057,13-Apr-2000
-    private static final LocalDate adRefDate = LocalDate.of(2000, 4, 13);
-    private static final BikramSambat bsRefDate = BikramSambat.of(2057, 1, 1);
+    public static BikramSambat localDateToBs(LocalDate localDate) {
+        BikramSambat bsRefDate = findBsRefDate(localDate);
+        LocalDate adRefDate = findAdRefDate(localDate);
 
-    public static BikramSambat localDateIntoBs(ZonedDateTime gDate) {
-        long daysElapsed = DAYS.between(adRefDate, gDate);
-
-        return computeBikramSambat(daysElapsed, gDate.getDayOfWeek());
-
-    }
-
-    private static BikramSambat computeBikramSambat(long daysElapsedSinceRefAd, DayOfWeek dayOfWeek) {
         int y = bsRefDate.getYear();
         int m = bsRefDate.getMonth();
-        int d = bsRefDate.getDay();
+        int d = bsRefDate.getDayOfMonth();
 
-        while (daysElapsedSinceRefAd > 0) {
-
-            int daysInMth = bsMonthsDaysLookup.get(y)[m - 1];
+        long daysElapsed = DAYS.between(adRefDate, localDate);
+        while (daysElapsed > 0) {
+            // no of days in month m of year y
+            int daysInMth = daysInBsMonth(y, m);
 
             // calculate total no of days in year y
-            Integer daysInYear = Arrays.stream(bsMonthsDaysLookup.get(y))
-                                       .reduce(0, (f, s) -> f + s);
-
-            if (daysElapsedSinceRefAd >= daysInYear) {
-                // days elapsed is more than no of days in year y.
+            Integer daysInYear = daysInBsYear(y);
+            if (daysElapsed >= daysInYear) {
                 y++;
                 m = 1;
                 d = 1;
-                daysElapsedSinceRefAd = daysElapsedSinceRefAd - daysInYear;
-            } else if (daysElapsedSinceRefAd >= daysInMth) {
-                // days elapsed is more the than no of days in month m
+                daysElapsed -= daysInYear;
+            } else if (daysElapsed >= daysInMth) {
                 m++;
                 d = 1;
 
@@ -321,27 +306,61 @@ class BsAdConverter {
                     m = 1;
                     d = 1;
                 }
-                daysElapsedSinceRefAd = daysElapsedSinceRefAd - daysInMth;
+
+                daysElapsed -= daysInMth;
             } else {
                 d++;
-                daysElapsedSinceRefAd--;
+                daysElapsed--;
             }
         }
 
-        return BikramSambat.of(y, m, d, dayOfWeek.getValue());
+        return BikramSambat.of(y, m, d);
     }
 
-    public static BikramSambat localDateIntoBs(LocalDate gDate) {
+    public static LocalDate bsToLocalDate(BikramSambat bsDate) {
+        // calculate days elapsed since BS new year day
 
-        // No of days elapsed since the reference AD date
-        long daysElapsed = DAYS.between(adRefDate, gDate);
+        int daysElapsed = bsDate.getDayOfMonth();
 
-        // Equivalent reference VS year, month & day
-        return computeBikramSambat(daysElapsed, gDate.getDayOfWeek());
+        Integer[] monthDays = NO_OF_DAYS_IN_BS_YR_LOOKUP.get(bsDate.getYear());
+        for (int m = 0; m < bsDate.getMonth() - 1; m++) {
+            daysElapsed += monthDays[m];
+        }
+
+        // minus 1 since new year day is already included.
+        daysElapsed -= 1;
+
+        LocalDate adRefDate = BS_YR_TO_AD_NEW_YEAR_DAY_MAP.get(bsDate.getYear());
+        return adRefDate.plusDays(daysElapsed);
     }
 
-    public static void main(String[] args) {
-        System.out.println(BikramSambat.today().toNepaliString());
-        System.out.println(BsAdConverter.localDateIntoBs(LocalDate.of(2018, 6, 24)).toNepaliString());
+    private static int daysInBsMonth(int bsYear, int bsMonth) {
+        return NO_OF_DAYS_IN_BS_YR_LOOKUP.get(bsYear)[bsMonth - 1];
+    }
+
+    private static int daysInBsYear(int bsYear) {
+        return Arrays.stream(NO_OF_DAYS_IN_BS_YR_LOOKUP.get(bsYear))
+                     .reduce(0, Integer::sum);
+    }
+
+    private static BikramSambat findBsRefDate(LocalDate localDate) {
+        Map.Entry<Integer, LocalDate> lookupEntry = BS_YR_TO_AD_NEW_YEAR_DAY_MAP.entrySet()
+                                                                                .stream()
+                                                                                .filter(e -> e.getValue().getYear() == localDate.getYear())
+                                                                                .findFirst()
+                                                                                .orElseThrow(() -> new RuntimeException("Can't find new year mapping for " + localDate.getYear()));
+        LocalDate adRefDate = lookupEntry.getValue();
+        Integer bsRefYr = lookupEntry.getKey();
+
+        if (localDate.isBefore(adRefDate)) {
+            bsRefYr -= 1;
+        }
+
+        return BikramSambat.of(bsRefYr, 1, 1);
+    }
+
+    private static LocalDate findAdRefDate(LocalDate localDate) {
+        BikramSambat bsRefDate = findBsRefDate(localDate);
+        return BS_YR_TO_AD_NEW_YEAR_DAY_MAP.get(bsRefDate.getYear());
     }
 }

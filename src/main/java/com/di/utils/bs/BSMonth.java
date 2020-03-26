@@ -1,8 +1,8 @@
-package nepalidate;
+package com.di.utils.bs;
 
 import java.util.Arrays;
 
-public enum NepaliMonth {
+public enum BSMonth {
     BAISHAKH("बैशाख", 1),
     JESTHA("जेठ", 2),
     ASHADH("असार", 3),
@@ -19,7 +19,7 @@ public enum NepaliMonth {
     private String nepName;
     private int intValue;
 
-    NepaliMonth(String nepName, int intValue) {
+    BSMonth(String nepName, int intValue) {
         this.nepName = nepName;
         this.intValue = intValue;
     }
@@ -32,17 +32,17 @@ public enum NepaliMonth {
         return intValue;
     }
 
-    public static NepaliMonth fromIntValue(int intValue) {
-        return Arrays.stream(NepaliMonth.values())
+    public static BSMonth fromIntValue(int intValue) {
+        return Arrays.stream(BSMonth.values())
                      .filter(nepaliDayOfWeek -> nepaliDayOfWeek.intValue == intValue)
                      .findFirst()
                      .orElseThrow(() -> new RuntimeException("Invalid intValue = " + intValue));
     }
 
-    public static NepaliMonth fromIntValue_j7(int intValue) {
+    public static BSMonth fromIntValue_j7(int intValue) {
 
-        for(NepaliMonth nm : NepaliMonth.values()) {
-            if(intValue == nm.intValue) {
+        for (BSMonth nm : BSMonth.values()) {
+            if (intValue == nm.intValue) {
                 return nm;
             }
         }
