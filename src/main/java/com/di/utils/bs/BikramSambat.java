@@ -7,6 +7,10 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 
+import static com.di.utils.bs.BsAdConverter.localDateToBs;
+import static com.di.utils.bs.Utils.dnDigitToInt;
+import static com.di.utils.bs.Utils.isValidDnDigit;
+
 public final class BikramSambat implements Comparable<BikramSambat> {
     private static final HashMap<String, Integer> BS_MONTH_TO_INT_LOOKUP = new HashMap<String, Integer>() {{
         put("बैशाख", 1);
@@ -66,27 +70,28 @@ public final class BikramSambat implements Comparable<BikramSambat> {
     }
 
     public static BikramSambat of(String dnYear, String dnMonth, String dnDayOfMonth) {
-        if (!Utils.isValidDnDigit(dnYear)) {
+        if (!isValidDnDigit(dnYear)) {
             throw new RuntimeException(dnYear + " is not a valid Nepali digit.");
         }
 
-        if (!Utils.isValidDnDigit(dnDayOfMonth)) {
+        if (!isValidDnDigit(dnDayOfMonth)) {
             throw new RuntimeException(dnDayOfMonth + " is not a valid Nepali digit.");
         }
 
-        if (BS_MONTH_TO_INT_LOOKUP.get(dnMonth) == null) {
+        boolean validBsMonth = BS_MONTH_TO_INT_LOOKUP.get(dnMonth) != null || isValidDnDigit(dnMonth);
+        if (!validBsMonth) {
             throw new RuntimeException(dnMonth + " is not a valid Nepali month.");
         }
 
-        int y = Utils.dnDigitToInt(dnYear);
-        int m = BS_MONTH_TO_INT_LOOKUP.get(dnMonth);
-        int d = Utils.dnDigitToInt(dnDayOfMonth);
+        int y = dnDigitToInt(dnYear);
+        int m = isValidDnDigit(dnMonth) ? dnDigitToInt(dnMonth) : BS_MONTH_TO_INT_LOOKUP.get(dnMonth);
+        int d = dnDigitToInt(dnDayOfMonth);
 
         return BikramSambat.of(y, m, d);
     }
 
     public static BikramSambat from(LocalDate localDate) {
-        return BsAdConverter.localDateToBs(localDate);
+        return localDateToBs(localDate);
     }
 
     public LocalDate toLocalDate() {
@@ -97,7 +102,7 @@ public final class BikramSambat implements Comparable<BikramSambat> {
         Instant now = Instant.now();
         ZonedDateTime nepaliTime = now.atZone(ZoneId.of("GMT+05:45"));
 
-        BikramSambat bikramSambat = BsAdConverter.localDateToBs(nepaliTime.toLocalDate());
+        BikramSambat bikramSambat = localDateToBs(nepaliTime.toLocalDate());
 
         return bikramSambat;
     }
@@ -106,7 +111,7 @@ public final class BikramSambat implements Comparable<BikramSambat> {
         Instant now = Instant.now();
         ZonedDateTime nepaliTime = now.atZone(ZoneId.of("GMT+05:45"));
         ZonedDateTime yesterday = nepaliTime.minusDays(1);
-        BikramSambat bsYesterday = BsAdConverter.localDateToBs(yesterday.toLocalDate());
+        BikramSambat bsYesterday = localDateToBs(yesterday.toLocalDate());
         return bsYesterday;
     }
 
@@ -183,6 +188,10 @@ public final class BikramSambat implements Comparable<BikramSambat> {
         // convert BS into AD
         LocalDate localDateFromBs = bs.toLocalDate();
         System.out.println(localDateFromBs); // 2020-03-26
+
+        BikramSambat bs1 = BikramSambat.of("२०७६", "१२", "१३");
+        System.out.println(bs1); // BikramSambat{year=2076, month=12, dayOfMonth=13, dnYear='२०७६', dnMonth='चैत', dnDayOfMonth='१३'}
+        System.out.println(bs1.toDnString()); // १३ चैत, २०७६
 
         // create BS date from LocalDate
         BikramSambat bsFromLocalDate = BikramSambat.from(LocalDate.of(2020, 3, 26));
