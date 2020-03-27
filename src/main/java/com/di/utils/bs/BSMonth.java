@@ -16,8 +16,8 @@ public enum BSMonth {
     FALGUN("फागुन", 11),
     CHAITRA("चैत", 12);
 
-    private String nepName;
-    private int intValue;
+    private final String nepName;
+    private final int intValue;
 
     BSMonth(String nepName, int intValue) {
         this.nepName = nepName;

@@ -143,7 +143,7 @@ class BsAdConverter {
         put(2099, new Integer[]{31, 31, 32, 31, 31, 31, 30, 29, 29, 30, 30, 30});
         put(2100, new Integer[]{31, 32, 31, 32, 30, 31, 30, 29, 30, 29, 30, 30});
     }};
-    public static Map<Integer, LocalDate> BS_YR_TO_AD_NEW_YEAR_DAY_MAP = new HashMap<Integer, LocalDate>() {{
+    public static final Map<Integer, LocalDate> BS_YR_TO_AD_NEW_YEAR_DAY_MAP = new HashMap<Integer, LocalDate>() {{
         put(1970, LocalDate.parse("13-Apr-1913", FORMATTER));
         put(1971, LocalDate.parse("13-Apr-1914", FORMATTER));
         put(1972, LocalDate.parse("13-Apr-1915", FORMATTER));
