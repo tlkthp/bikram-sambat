@@ -1,9 +1,29 @@
 plugins {
     id 'java'
+    id('maven-publish') // 1
+}
+
+// 2
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/tilakthapa/repo")
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+    publications {
+        gpr(MavenPublication) {
+            from(components.java)
+        }
+    }
 }
 
 group 'com.di.utils'
-version '1.0.0'
+version '0.0.1-SNAPSHOT'
 
 compileJava.options.encoding = 'UTF-8'
 compileTestJava.options.encoding = 'UTF-8'
