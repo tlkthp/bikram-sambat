@@ -1,9 +1,9 @@
-name: Build & Test
+name: Build
 on: [push]
 
 jobs:
   build:
-    name: Build & Test
+    name: Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout latest code
@@ -14,5 +14,5 @@ jobs:
         with:
           java-version: 1.8
 
-      - name: Build
+      - name: Build and run tests
         run: ./gradlew build
