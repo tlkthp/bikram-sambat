@@ -23,7 +23,7 @@ publishing {
 }
 
 group 'com.di.utils'
-version '0.0.1-SNAPSHOT'
+version '0.0.1'
 
 compileJava.options.encoding = 'UTF-8'
 compileTestJava.options.encoding = 'UTF-8'
