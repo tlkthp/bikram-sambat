@@ -4,8 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 
-import static com.di.utils.bs.BsAdConverter.BS_YR_TO_AD_NEW_YEAR_DAY_MAP;
-import static com.di.utils.bs.BsAdConverter.localDateToBs;
+import static com.di.utils.bs.BsAdConverter.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BsAdConverterTest {
@@ -27,7 +26,7 @@ class BsAdConverterTest {
 
     @Test
     void bsToLocalDate_sanity_check() {
-        BS_YR_TO_AD_NEW_YEAR_DAY_MAP.forEach((key1, value1) -> assertEquals(value1, BsAdConverter.bsToLocalDate(BikramSambat.of(key1, 1, 1))));
-        BS_YR_TO_AD_NEW_YEAR_DAY_MAP.forEach((key, value) -> assertEquals(value.plusDays(5), BsAdConverter.bsToLocalDate(BikramSambat.of(key, 1, 6))));
+        BS_YR_TO_AD_NEW_YEAR_DAY_MAP.forEach((key1, value1) -> assertEquals(value1, bsToLocalDate(BikramSambat.of(key1, 1, 1))));
+        BS_YR_TO_AD_NEW_YEAR_DAY_MAP.forEach((key, value) -> assertEquals(value.plusDays(5), bsToLocalDate(BikramSambat.of(key, 1, 6))));
     }
 }
