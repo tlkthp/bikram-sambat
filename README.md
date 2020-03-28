@@ -1,6 +1,6 @@
 # bikram-sambat
 
-[![CircleCI](https://circleci.com/gh/tilakthapa/bikram-sambat.svg?style=svg)](https://circleci.com/gh/tilakthapa/bikram-sambat)
+![Build](https://github.com/tilakthapa/bikram-sambat/workflows/Build/badge.svg)
 
 My primary use case - 
 Convert Bikram Sambat date written in Nepali (devanagari script) e.g. "१३ चैत २०७६" into Java 8 LocalDate and vice versa.
