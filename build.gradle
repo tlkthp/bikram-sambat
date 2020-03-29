@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id('maven-publish') // 1
+    id('maven-publish')
 }
 
 // 2
@@ -10,8 +10,8 @@ publishing {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/tilakthapa/bikram-sambat")
             credentials {
-                username = System.getenv("GITHUB_ACTOR")
-                password = System.getenv("GITHUB_TOKEN")
+                username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR")
+                password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
             }
         }
     }
@@ -27,7 +27,6 @@ version '0.0.1'
 
 compileJava.options.encoding = 'UTF-8'
 compileTestJava.options.encoding = 'UTF-8'
-//javadoc.options.encoding = 'UTF-8'
 sourceCompatibility = 1.8
 
 repositories {
