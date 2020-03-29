@@ -7,7 +7,7 @@ public abstract class Utils {
             char c = nepaliDigit.charAt(i);
             // ० - ९
             // 2406 - 2415
-            boolean validDigit = c >= 2406 && c < 2415;
+            boolean validDigit = c >= 2406 && c <= 2415;
             if (!validDigit) return false;
         }
         return true;
