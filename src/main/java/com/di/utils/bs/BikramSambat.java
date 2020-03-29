@@ -52,7 +52,6 @@ public final class BikramSambat implements Comparable<BikramSambat> {
     private final String dnYear;
     private final String dnMonth;
     private final String dnDayOfMonth;
-    private final String dnString;
 
     private BikramSambat(int year, int month, int dayOfMonth) {
         this.year = year;
@@ -60,9 +59,8 @@ public final class BikramSambat implements Comparable<BikramSambat> {
         this.dayOfMonth = dayOfMonth;
 
         this.dnYear = Utils.intToDnDigit(year);
-        this.dnMonth = BSMonth.fromIntValue(month).getNepName();
+        this.dnMonth = Utils.intToDnDigit(month);
         this.dnDayOfMonth = Utils.intToDnDigit(dayOfMonth);
-        this.dnString = Utils.intToDnDigit(dayOfMonth) + " " + BSMonth.fromIntValue(month).getNepName() + ", " + Utils.intToDnDigit(year);
     }
 
     public static BikramSambat of(int year, int month, int day) {
@@ -152,7 +150,7 @@ public final class BikramSambat implements Comparable<BikramSambat> {
     }
 
     public String toDnString() {
-        return dnString;
+        return dnDayOfMonth + " " + BSMonth.fromIntValue(month).getNepName() + " " + dnYear;
     }
 
     @Override
